@@ -23,17 +23,21 @@ class ValorantValidatorSpider(scrapy.Spider):
         yield scrapy.Request(url='https://tracker.gg/valorant/profile/riot/' + name[0] + "%23" + name[1] + "/overview", callback=self.parse)
 
     def parse(self, response):
-        page = response.url.split("/")[-2]
-        filename = f'quotes-{page}.html'
-        with open(filename, 'wb') as f:
-            f.write(response.body)
-        self.log(f'Saved file {filename}')
+        JSON = "{"
+        resp = response.css("div.value").getall()
+        Rank = re.sub("<.*?>","",resp[0])
+        keys = response.css("div.main > div > div.wrapper > div.numbers > span.name").getall()
+        values = response.css("div.main > div > div.wrapper > div.numbers > span.value").getall()
+        cleanKeys = []
+        cleanValues = []
+        for i in range(len(keys) - 1):
+            cleanKeys.append(re.sub("<.*?>","",keys[i]))
+            cleanValues.append(re.sub("<.*?>","",values[i]))
+            JSON += '"' + cleanKeys[i] + '":"' + cleanValues[i] + '",'
+        JSON += '"Rank":"' + Rank + '"'
+        JSON += "}"
+        print(JSON)
 
-process = CrawlerProcess(settings={
-    "FEEDS": {
-        "out.json": {"format": "json"}
-    }
-})
+process = CrawlerProcess()
 process.crawl(ValorantValidatorSpider)
-
 process.start()

@@ -2,7 +2,7 @@ const {
     ipcMain,
     session
 } = require('electron');
-const {exec} = require('child_process');
+const { exec } = require('child_process');
 const electron = require('electron');
 const Main = require('electron/main');
 const fs = require('fs');
@@ -86,14 +86,13 @@ ipcMain.on("GetJWT", (e) => {
     e.returnValue = JWT;
 })
 ipcMain.on("GetValorantStats", (e, id) => {
-    const python = exec('python3 ./src/py/val.py --tag='+id, (err, stdout, stderr)=>{
+    const python = exec('python3 ./src/py/val.py --tag=' + id, (err, stdout, stderr) => {
         if (err) {
             console.error(`exec error: ${err}`);
             return;
-          }
-        
-          console.log(`out: ${stdout}`);
-          e.returnValue = stdout;
+        }
+        //Return is pre-formatted json
+        e.returnValue = JSON.parse(stdout);
     });
 })
 

@@ -13,7 +13,6 @@ navigator.getUserMedia = (navigator.getUserMedia ||
 
 $(document).ready(function () {
     JWT = ipcRenderer.sendSync("GetJWT");
-    pyresults = ipcRenderer.sendSync("GetValorantStats", "DeeperThroat#1337");
     console.log(pyresults);
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext('2d');
@@ -203,5 +202,12 @@ function OpenOverlay(module) {
         default:
             console.log(param);
             break;
+    }
+}
+function GetValorantStats(id) {
+    pyresults = ipcRenderer.sendSync("GetValorantStats", id);
+    if(pyresults.length > 1)
+    {
+        //Account exists
     }
 }
