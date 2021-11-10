@@ -6,10 +6,48 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        #ChatBox {
+            min-width: 300px;
+            height:300px;
+            border: 1px solid black;
+            background: rgb(65, 63, 63);
+            color: #FAFAFA;
+            overflow: auto;
+        }
+        .ChatMessage {
+            border-radius: 5px;
+            margin: 5px;
+            padding: 3px;
+            border: 1px solid grey;
+            display: inline-block;
+        }
+        .msg-user {
+            font-weight: 700;
+            color: red;
+        }
+    </style>
 </head>
 
 <body>
+    <div id="ChatBox">
+
+    </div>
+    <div class="inputcontainer">
+        <textarea name="YourMessage" id="YourMessage"></textarea>
+        <button onClick="SendMessage()">Send</button>
+    </div>
+    <div class="inputcontainer">
+        <input type="text" id="Uname">
+        <button onClick="UpdateUsername()">Send</button>
+    </div>
+    <div class="logincontainer">
+        <input type="text" name='username' id='username'>
+        <input type="password" name='password' id='password'>
+        <button onClick='Login()'>Login &amp; Connect</button>
+    </div>
     <script>
+        let USER;
         let socket;
         let JWT;
         let getJWT = fetch('http://localhost:9090/jwt');
@@ -17,7 +55,7 @@
             let jwt = res.json();
             jwt.then(j =>{
                 JWT = j.jwt;
-                openWebsocket();
+                console.log("JWT SET")
             })
         })
         function openWebsocket() {
@@ -25,11 +63,12 @@
             socket.onopen = function (e) {
                 alert("[open] Connection established");
                 alert("Sending to server");
-                socket.send("My name is John");
+                console.log(USER._id);
+                socket.send("[id]" + JWT);
             };
 
             socket.onmessage = function (event) {
-                alert(`[message] Data received from server: ${event.data}`);
+                addMessage(event.data);
             };
 
             socket.onclose = function (event) {
@@ -45,6 +84,54 @@
             socket.onerror = function (error) {
                 alert(`[error] ${error.message}`);
             };
+        }
+        function addMessage(msg)
+        {
+            if(msg.includes('[h]'))
+            {
+                //Getting the whole history of chat
+                msg = msg.replace('[h]','');
+                msg = JSON.parse(msg);
+                for(let i = 0; i < msg.length; i++)
+                {
+                    let m = msg[i];
+                    console.log(m);
+                    let chatmessage = document.createElement("div");
+                    chatmessage.classList.add("messageContainer");
+                    chatmessage.innerHTML = "<div class='ChatMessage'><span class='msg-user'>" + m.u + "</span>: " + decodeURIComponent(m.m) + "</div>";
+                    document.getElementById('ChatBox').appendChild(chatmessage);
+                    document.getElementById("ChatBox").scrollTo(0,document.getElementById("ChatBox").scrollHeight);
+                }
+            } else {
+            msg = msg.split("[m]");
+            msg[0] = msg[0].replace("[u]","");
+            let chatmessage = document.createElement("div");
+            chatmessage.classList.add("messageContainer");
+            chatmessage.innerHTML = "<div class='ChatMessage'><span class='msg-user'>" + msg[0] + "</span>: " + decodeURIComponent(msg[1]) + "</div>";
+            document.getElementById('ChatBox').appendChild(chatmessage);
+            document.getElementById("ChatBox").scrollTo(0,document.getElementById("ChatBox").scrollHeight);
+            }
+        }
+        function UpdateUsername() {
+            let uname =document.getElementById("Uname").value;
+            console.log(socket);
+            socket.send("[UNAME]"+encodeURIComponent(uname));
+        }
+        function SendMessage() {
+            let msg = document.getElementById("YourMessage").value;
+            socket.send(encodeURIComponent(msg));
+        }
+        function Login() {
+            let uname = document.getElementById('username').value;
+            let pass = document.getElementById('password').value;
+            let loginAttempt = fetch('http://localhost:9090/login', { headers: { username: uname, password: pass, token: JWT}});
+            loginAttempt.then(res => {
+                res.json().then(r => {
+                    //User object returned
+                    USER = r[0];
+                    openWebsocket();
+                })
+            })
         }
     </script>
 </body>
