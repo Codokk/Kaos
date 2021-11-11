@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    test
+    <video onclick="snapshot(this);" width=640 height=480 id="video" controls autoplay></video>  
+    <canvas width=640 height=480 id="mycanvas"></canvas>
+</body>
+<script>
+    let framerate = 1;
+    let webcamStream;
+    let socket = new WebSocket("ws://127.0.0.1:9090/streamer/Cody");
+    socket.onopen = function(e) {
+        console.log("Connected");
+    }
+    StartCamera();
+    function StartCamera() {
+        var video = document.querySelector("video");
+
+        if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+            video.srcObject = stream;
+            })
+            .catch(function (err0r) {
+            console.log("Something went wrong!");
+            });
+        }
+        setInterval(()=>{
+            var v = document.querySelector("video");
+            var c = document.getElementById("mycanvas"); // Get the canvas
+            var ctx = c.getContext("2d");
+            ctx.drawImage(v,0.1,0.1);
+            socket.send(c.toDataURL());
+        }, 1000/framerate)
+    }
+</script>
+</html>

@@ -33,6 +33,7 @@
     <div id="ChatBox">
 
     </div>
+    <img src="" alt="" id="webcam">
     <div class="inputcontainer">
         <textarea name="YourMessage" id="YourMessage"></textarea>
         <button onClick="SendMessage()">Send</button>
@@ -50,20 +51,11 @@
         let USER;
         let socket;
         let JWT;
-        let getJWT = fetch('http://localhost:9090/jwt');
-        getJWT.then(res=>{
-            let jwt = res.json();
-            jwt.then(j =>{
-                JWT = j.jwt;
-                console.log("JWT SET")
-            })
-        })
         function openWebsocket() {
-            socket = new WebSocket("ws://127.0.0.1:9090/websocket/testchannel");
+            socket = new WebSocket("ws://127.0.0.1:9090/websocket/Cody");
             socket.onopen = function (e) {
                 alert("[open] Connection established");
                 alert("Sending to server");
-                console.log(USER._id);
                 socket.send("[id]" + JWT);
             };
 
@@ -102,14 +94,17 @@
                     document.getElementById('ChatBox').appendChild(chatmessage);
                     document.getElementById("ChatBox").scrollTo(0,document.getElementById("ChatBox").scrollHeight);
                 }
-            } else {
+            } else if (msg.includes('[u]')) {
+            console.log(msg);
+            msg = msg.replace('[u]', '');
             msg = msg.split("[m]");
-            msg[0] = msg[0].replace("[u]","");
             let chatmessage = document.createElement("div");
             chatmessage.classList.add("messageContainer");
             chatmessage.innerHTML = "<div class='ChatMessage'><span class='msg-user'>" + msg[0] + "</span>: " + decodeURIComponent(msg[1]) + "</div>";
             document.getElementById('ChatBox').appendChild(chatmessage);
             document.getElementById("ChatBox").scrollTo(0,document.getElementById("ChatBox").scrollHeight);
+            } else {
+                document.getElementById('webcam').src = msg;
             }
         }
         function UpdateUsername() {
@@ -124,11 +119,12 @@
         function Login() {
             let uname = document.getElementById('username').value;
             let pass = document.getElementById('password').value;
-            let loginAttempt = fetch('http://localhost:9090/login', { headers: { username: uname, password: pass, token: JWT}});
+            let loginAttempt = fetch('http://localhost:9090/login', { headers: { username: uname, password: pass}});
             loginAttempt.then(res => {
                 res.json().then(r => {
-                    //User object returned
-                    USER = r[0];
+                    //Token Returned
+                    JWT = r.token;
+                    USER = r.data;
                     openWebsocket();
                 })
             })
