@@ -1,51 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/login.css">
-    <title>Kaos Login</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+  <link rel="stylesheet" href="../scss/login.css">
+  <title>Kaos Login</title>
 </head>
+
 <body>
-    <!------ Include the above in your HEAD tag ---------->
-    
-    <div class="wrapper fadeInDown">
-      <div id="formContent">
-          <div class="header">
-              <div id="Close"></div>
-              <div id="Minimize"></div>
-              <div id="Fullscreen"></div>
-          </div>
-        <!-- Tabs Titles -->
-    
-        <!-- Icon -->
-        <div class="fadeIn first">
-          <img src="../img/clash.png" id="icon" alt="User Icon" />
-        </div>
-    
-        <!-- Login Form -->
-        <div id="errorBar">
-          
-        </div>
-        <form>
-          <input type="text" id="username" class="fadeIn second" name="username" placeholder="login" autofocus>
-          <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
-          <input type="submit" id="loginbutton" class="fadeIn fourth" value="Log In">
-        </form>
-    
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-          <a class="underlineHover" href="#" id="forgotpassword">Forgot Password?</a>
-        </div>
-    
+  <!------ Include the above in your HEAD tag ---------->
+
+  <div class="wrapper fadeInDown" id="Login">
+    <div id="formContent">
+      <div class="header">
+        <div id="Close"></div>
+        <div id="Minimize"></div>
+        <div id="Fullscreen"></div>
       </div>
+      <!-- Tabs Titles -->
+
+      <!-- Icon -->
+      <div class="fadeIn first">
+        <img src="../img/clash.png" id="icon" alt="User Icon" />
+      </div>
+
+      <!-- Login Form -->
+      <div id="errorBar">
+
+      </div>
+      <form id='login-form'>
+        <input type="text" id="username" class="fadeIn second" name="username" placeholder="login" autofocus>
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+        <input type="submit" id="loginbutton" class="fadeIn fourth" value="Log In">
+        <a style='display: block; margin-top: -30px; margin-bottom: 40px;' href="#" onclick="swapForm('signup')">Or Sign Up</a>
+      </form>
+      <form class='hidden' id='signup-form'>
+        <input type="text" id="signup-username" class="fadeIn second" name="username" placeholder="username" autofocus>
+        <input type="text" id="signup-email" class="fadeIn second" name="email" placeholder="email" autofocus>
+        <input type="password" id="signup-password" class="fadeIn third" name="password" placeholder="password">
+        <input type="submit" id="signupbutton" class="fadeIn fourth" value="Sign Up">
+        <a style='display: block; margin-top: -30px; margin-bottom: 40px;' href="#" onclick="swapForm('login')">Or Login</a>
+      </form>
+
+      <!-- Remind Passowrd -->
+      <div id="formFooter">
+        <a class="underlineHover" href="#" id="forgotpassword">Forgot Password?</a>
+      </div>
+
     </div>
+  </div>
 </body>
 <script src="https://unpkg.com/crypto-js@4.1.1/index.js"></script>
 <script src="../js/setup.js"></script>
 <script src="../js/MenuHandler.js"></script>
 <script src="../js/Login.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+
 </html>

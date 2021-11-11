@@ -26,8 +26,8 @@ $(document).ready(function() {
             method: "POST",
             url: api + "/user/login",
             data: {
-                email: user.email,
-                password: user.pass
+                email: $("#username").val(),
+                password: $("#password").val()
             }
         }).done((res)=>{
             console.log(res);
@@ -38,18 +38,22 @@ $(document).ready(function() {
             }
         })
     })
-    $("#forgotpassword").click(function (e) {
+    $("#signupbutton").click(function (e) {
         e.preventDefault();
-        user.name = user.email = $("#username").val()
-        user.pass = $("#password").val()
+        user.name = $("#signup-username").val()
+        user.email = $("#signup-email").val()
+        user.pass = $("#signup-password").val()
         $.ajax({
             method: "POST",
             url: api + "/user/signup",
             data: {
-                user: user
+                username: user.name,
+                email: user.email,
+                password: user.pass
             }
         }).done((res)=>{
             if(res.error) Err(res.error);
+            console.log(res);
         })
     })
 })
@@ -59,4 +63,10 @@ function Err(error) {
     setTimeout(()=>{
         $("#errorBar").removeClass("active");
     }, 5000)
+}
+
+function swapForm(form) {
+    console.log('swapping');
+    $("form").addClass("hidden");
+    $("#"+form+"-form").removeClass("hidden");
 }

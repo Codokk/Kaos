@@ -78,13 +78,13 @@ fastify.post("/api/user/login", (req, res) => {
             }
         })
     } else if (req.body.email && req.body.password) {
-        let params = {"username":req.body.email,"hash":GoodSalt(req.body.password)}
+        let params = {"email":req.body.email,"hash":GoodSalt(req.body.password)}
         Query = query("R","users", params)
         Query.then(retdata => {
             if(retdata.length > 0)
             {
                 retdata = retdata[0]
-                let token = jwt.sign(retdata['username'], SALT);
+                let token = jwt.sign(retdata['email'], SALT);
                 res.send({
                     "success": "true",
                     "token": token,
@@ -100,7 +100,7 @@ fastify.post("/api/user/login", (req, res) => {
             } else {
                 res.send({
                     "error": "No User Found",
-                    "hash": GoodSalt(password)
+                    "data": res.body
                 })
             }
         })
@@ -110,10 +110,14 @@ fastify.post("/api/user/login", (req, res) => {
     }
 })
 fastify.post("/api/user/signup", (req, res) => {
-    let Query, u;
-    u = req.body.user;
-    if(u.name && u.email && u.pass)
+    let Query, u;   
+    if(req.body.username && req.body.email && req.body.password)
     {
+        let u = {
+            name:req.body.username,
+            email:req.body.email,
+            pass:req.body.password
+        }
         let qry = query("R","users", {"email":u.email});
         qry.then(r => {
             if(!(r.length > 0))
@@ -136,7 +140,7 @@ fastify.post("/api/user/signup", (req, res) => {
             }
         })
     } else {
-        res.send({"error":"Invalid User"})
+        res.send({"error":"Invalid User", "data": req.body})
     }
 })
 //Websocket Testpage
