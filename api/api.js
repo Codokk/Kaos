@@ -3,6 +3,7 @@ console.time("ServerStart")
 // Requirements
 require('dotenv').config();
 const Crypto = require('node:crypto');
+const { spawn } = require('child_process');
 const fastify = require('fastify')({ logger: true })
 fastify.register(require('fastify-websocket'));
 fastify.register(require('fastify-formbody'));
@@ -15,13 +16,17 @@ const sqlite3 = require('sqlite3').verbose();
 // Globals
 const wsdb = {};
 const SALT = process.env.secret;
+const logOutput = (name) => (data) => console.log(`[${name}] ${data}`)
 
 // MongoDB Setup
 const mdburl = "mongodb://localhost:27017";
 const db = new MongoClient(process.env.MDBURL);
 // SQLite3 Setup
 const sqldb = new sqlite3.Database(":memory:");
-
+// Run Python Script
+runScript('valmatch.py').then(e=>{
+    console.log("Match Script Ran");
+})
 // Routes
 fastify.get("/api", (req, res)=>{
     res.send({ msg: "API"})
@@ -234,6 +239,38 @@ async function query(action, collection, params) {
             break;
     }
     return ret;
+}
+function runScript(script) {
+    return new Promise((resolve, reject) => {
+        const process = spawn('python3', ['./'+script]);
+
+        const out = []
+        process.stdout.on(
+            'data',
+            (data) => {
+                out.push(data.toString());
+                logOutput('stdout')(data);
+            }
+        );
+
+        const err = []
+        process.stderr.on(
+            'data',
+            (data) => {
+                err.push(data.toString());
+                logOutput('stderr')(data);
+            }
+        );
+
+        process.on('exit', (code, signal) => {
+            logOutput('exit')(`${code} (${signal})`)
+            if (code === 0) {
+                resolve(out);
+            } else {
+                reject(new Error(err.join('\n')))
+            }
+        });
+    });
 }
 async function start() {
     try {
