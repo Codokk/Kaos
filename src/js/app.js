@@ -30,7 +30,7 @@ $(document).ready(function () {
     })
     // Event Captures
     $("#profile-img").dblclick(()=> {
-        $(".overlay-app").addClass("is-active");startWebcam();
+        ipcRenderer.send("Logout");
     })
 })
 

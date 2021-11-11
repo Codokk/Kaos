@@ -2,17 +2,21 @@ let user = {};
 $(document).ready(function() {
     //First thing first check if token exists
     let JWT = ipcRenderer.sendSync("GetJWT");
-    $.ajax({
-        method: "POST",
-        url: api + "/user/login",
-        data: {
-            token: JWT
-        }
-    }).done((res)=>{
-        console.log(res);
-        if(res.error) Err(res.error);
-        else ipcRenderer.send("JWT",res.token);
-    })
+    if(JWT)
+    {
+        $.ajax({
+            method: "POST",
+            url: api + "/user/login",
+            data: {
+                token: JWT
+            }
+        }).done((res)=>{
+            console.log(res);
+            if(res.error) Err(res.error);
+            else if (res.success) ipcRenderer.send("JWT",JWT);
+        })
+    }
+    
 
     $("#loginbutton").click(function (e) {
         e.preventDefault();
@@ -22,12 +26,16 @@ $(document).ready(function() {
             method: "POST",
             url: api + "/user/login",
             data: {
-                user: user
+                email: user.email,
+                password: user.pass
             }
         }).done((res)=>{
             console.log(res);
-            if(res.error) Err(res.error);
-            else ipcRenderer.send("JWT",res.token);
+            if(res.error){
+                Err(res.error);
+            } else if (res.success) {
+                ipcRenderer.send("JWT",res.token);
+            }
         })
     })
     $("#forgotpassword").click(function (e) {
