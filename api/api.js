@@ -2,48 +2,157 @@ console.log("Starting The Server");
 console.time("ServerStart")
 // Requirements
 require('dotenv').config();
+const Crypto = require('node:crypto');
 const fastify = require('fastify')({ logger: true })
-fastify.register(require('fastify-websocket'))
+fastify.register(require('fastify-websocket'));
+fastify.register(require('fastify-formbody'));
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const { MongoClient } = require('mongodb');
-const uuid = require('uuid');
+const sqlite3 = require('sqlite3').verbose();
+
 
 // Globals
 const wsdb = {};
+const SALT = process.env.secret;
 
-//DB Setup
+// MongoDB Setup
 const mdburl = "mongodb://localhost:27017";
 const db = new MongoClient(process.env.MDBURL);
-fastify.get("/", (req, res)=>{
+// SQLite3 Setup
+const sqldb = new sqlite3.Database(":memory:");
+
+// Routes
+fastify.get("/api", (req, res)=>{
     res.send({ msg: "API"})
 })
+fastify.get("/api/streamer/*", {websocket: true}, (connection /* SocketStream */ , req /* FastifyRequest */ ) => {
+    // Get the attempted Channel
+    console.log("Connection");
+    let channel = (req.url).replace("/streamer/","");
+    console.log(channel);
+    //Create Channel if Doesn't exist
+    if(!wsdb[channel]){
+        wsdb[channel] = {};
+        wsdb[channel].users = new Set();
+        wsdb[channel].udb = {};
+        wsdb[channel].msgs = [];
+        console.log("Created Channel: " + channel)
+    }
+    // Set the connection IP to the requestor's IP
+    connection.ip = req.ip;
+    connection.socket.on('message', message => {
+        message = message.toString();
+        for(let client of wsdb[channel].users) {
+            client.socket.send(message);
+            console.log('sent to client');
+        }
+    })
+    connection.socket.on('close', () => {
+        wsdb[channel].users.delete(connection)
+    }) 
+})
+fastify.get("/api/watch/*",(req, res) =>{
+
+})
+fastify.post("/api/user/login", (req, res) => {
+    // Set all possible header vars that would be passed
+    let ip = req.socket.remoteAddress;
+    // Start with Token Login, since this is preferred
+    if(req.body.token) {
+        let token = req.body.token;
+        Query = query("R","users", {"token": token, "ip": ip})
+        Query.then(retdata => {
+            if(retdata.length > 0)
+            {
+                //Login Successful
+                retdata = retdata[0]
+                res.send({
+                    "success": "true",
+                    "data": retdata
+                })
+            } else {
+                res.send({
+                    "error":"Token invalid"
+                })
+            }
+        })
+    } else if (req.body.email && req.body.password) {
+        let params = {"username":req.body.email,"hash":GoodSalt(req.body.password)}
+        Query = query("R","users", params)
+        Query.then(retdata => {
+            if(retdata.length > 0)
+            {
+                retdata = retdata[0]
+                let token = jwt.sign(retdata['username'], SALT);
+                res.send({
+                    "success": "true",
+                    "token": token,
+                    "data": retdata
+                });
+                let q = query("U",'users', [
+                    {"_id": retdata._id},
+                    {"token": token, "ip": ip}
+                ]);
+                q.then(e => {
+                    console.log(e);
+                })
+            } else {
+                res.send({
+                    "error": "No User Found",
+                    "hash": GoodSalt(password)
+                })
+            }
+        })
+    } else {
+        //No attempt to login was valid
+        res.send({"error":"Bad API Request", "data": req.body})
+    }
+})
+fastify.post("/api/user/signup", (req, res) => {
+    let Query, u;
+    u = req.body.user;
+    if(u.name && u.email && u.pass)
+    {
+        let qry = query("R","users", {"email":u.email});
+        qry.then(r => {
+            if(!(r.length > 0))
+            {
+                u.hash = GoodSalt(u.pass);
+                delete u.pass;
+                if(u.hash) {
+                    let token = jwt.sign(u.email, SALT);
+                    u.token = token;
+                    u.ip = req.socket.remoteAddress;
+                    Query = query("C", "users", u);
+                    Query.then(result => {
+                        res.send({"success":"true","token":token})
+                    })
+                } else {
+                    res.send({"error":"Password Hashing Failed"});
+                }
+            } else {
+                res.send({"error":"Email already in use"})
+            }
+        })
+    } else {
+        res.send({"error":"Invalid User"})
+    }
+})
+//Websocket Testpage
 fastify.get("/webtest",(req,res)=>{
     let htmlBuffer = fs.readFileSync('client.html');
     res.type('text/html').send(htmlBuffer);
 })
-fastify.get("/jwt",(req,res)=>{
-    //Signing based on IP right now
-    let token = jwt.sign(req.connection.remoteAddress, process.env.secret)
-    return {jwt: token}
+fastify.get("/streamtest",(req,res)=>{
+    let htmlBuffer = fs.readFileSync('streamer.html');
+    res.type('text/html').send(htmlBuffer);
 })
-fastify.get("/login", (req, res) => {
-    let username = req.headers.username;
-    let password = req.headers.password;
-    let params = {username: username, password:password};
-    query("R", "users",params)
-    .then(r => {
-        query("U", "users", [params,{ip:req.ip, token:req.headers.token}])
-        .then(e => {
-            console.log(e);
-            res.send(r);
-        })
-    })
-
-})
+// Creating Websocket Handler
 fastify.get('/websocket/*', {websocket: true}, (connection /* SocketStream */ , req /* FastifyRequest */ ) => {
     // Get the attempted Channel
     let channel = (req.url).replace("/websocket/","");
+    console.log(channel);
     //Create Channel if Doesn't exist
     if(!wsdb[channel]){
         wsdb[channel] = {};
@@ -82,18 +191,24 @@ fastify.get('/websocket/*', {websocket: true}, (connection /* SocketStream */ , 
             })
         } else {
             for(let client of wsdb[channel].users) {
+                let msg = message;
                 console.log(wsdb[channel].udb);
-                wsdb[channel].msgs.push({u: connection.id, m: message, time: Date.now()})
-                message = "[u]"+wsdb[channel].udb[connection.id]+"[m]"+message;
-                client.socket.send(message);
+                wsdb[channel].msgs.push({u: connection.id, m: msg, time: Date.now()})
+                msg = "[u]"+wsdb[channel].udb[connection.id]+"[m]"+msg;
+                client.socket.send(msg);
             }
         }
     })
     connection.socket.on('close', () => {
         wsdb[channel].users.delete(connection)
-    })
-    
+    }) 
 })
+
+function GoodSalt(pwd) {
+    let pass1 = Crypto.pbkdf2Sync(pwd, process.env.secret, 1000, 64, `sha512`).toString('hex');
+    let pass2 = Crypto.pbkdf2Sync(pwd, process.env.secret, 1000, 64, `sha512`).toString('hex');
+    return (pass1 === pass2 ? pass1 : false);
+}
 async function query(action, collection, params) {
     await db.connect();
     let ret;

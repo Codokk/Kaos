@@ -45,10 +45,12 @@
     "dotenv": "^10.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "fastify": "^3.23.1",
+    "fastify-formbody": "^5.1.0",
     "fastify-websocket": "^4.0.0",
     "jquery": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
+    "sqlite3": "^5.0.2",
     "trim-newlines": "^4.0.2",
     "uuid": "^8.3.2"
   },
