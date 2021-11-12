@@ -12,8 +12,7 @@ navigator.getUserMedia = (navigator.getUserMedia ||
     navigator.msGetUserMedia);
 
 $(document).ready(function () {
-    JWT = ipcRenderer.sendSync("GetJWT");
-    console.log(pyresults);
+    JWT = ipcRenderer.sendSync("GetJWT", true);
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext('2d');
     // Get User from API
@@ -24,14 +23,14 @@ $(document).ready(function () {
             token: JWT
         }
     }).done((res)=>{
-        if(res.error) window.close();
-        User = res.user;
-        PersonalizePage();
+        if(res.error) console.log(res.error);
+        User = res.data;
+        PageSwap('Dashboard');
     })
     // Event Captures
-    $("#profile-img").dblclick(()=> {
-        ipcRenderer.send("Logout");
-    })
+    // $("#profile-img").dblclick(()=> {
+    //     ipcRenderer.send("Logout");
+    // })
 })
 
 function takeUserPhoto() {
@@ -87,37 +86,6 @@ function snapshot() {
 }
 function DarkModeToggle() {
     $("body").toggleClass("light-mode");
-}
-function PersonalizePage() {
-    //Set the User Profile to their image
-    $("#profile-img").attr("src", User.imagedata);
-    $(".username-here").html(User.name);
-}
-function SwapSubmodule(sub) {
-    //Switch the Submodule
-    $(".submodule-link").removeClass("is-active");
-    $("#switch-" + sub).addClass("is-active");
-    $(".submodule").removeClass("is-active");
-    $("#submodule-"+sub).addClass("is-active");
-    switch(sub)
-    {
-        case "settings":
-            //Update settings with current user information
-            $("#settings-user-email > span:nth-child(1)").addClass("green");
-            $("#settings-user-email > span:nth-child(2)").html(User.email)
-            break;
-    }
-}
-function PageSwitch(page, param = null) {
-    // Load the page to switch to
-    $(".main-container").removeClass("is-active");
-    $("#"+page).addClass("is-active");
-    if(param != null)
-    {
-        //We're loading a chat room
-        $(".room-name").html(capitalize(param));
-        getMessages(param);
-    }
 }
 function UserUpdate(param) {
     switch(param)

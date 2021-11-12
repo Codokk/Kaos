@@ -19,7 +19,6 @@ let MainWindow = true;
 let LoginWindow;
 let Active_Peers = {};
 let isFullscreen = false;
-let hasLoggedIn = false; //To prevent the login window from auto-relogging in after logout
 let JWT = readData("JWT");
 
 function createLoginWindow() {
@@ -79,21 +78,20 @@ ipcMain.on("Fullscreen", () => {
 })
 ipcMain.on("Logout", () => {
     writeData("JWT", "");
+    JWT = "";
     setTimeout(()=>{
         createLoginWindow();
         MainWindow.close();
-    },2000)
+    },1000)
 })
 ipcMain.on("JWT", (e, token) => {
     JWT = token;
     writeData("JWT", token);
-    hasLoggedIn = true;
     createMainWindow()
     LoginWindow.close();
 });
 ipcMain.on("GetJWT", (e) => {
-    if(!hasLoggedIn) e.returnValue = JWT;
-    else e.returnValue = "";
+    e.returnValue = JWT;
 })
 ipcMain.on("GetValorantStats", (e, id) => {
     const python = exec('python3 ./src/py/val.py --tag=' + id, (err, stdout, stderr) => {

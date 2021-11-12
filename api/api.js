@@ -24,9 +24,9 @@ const db = new MongoClient(process.env.MDBURL);
 // SQLite3 Setup
 const sqldb = new sqlite3.Database(":memory:");
 // Run Python Script
-runScript('valmatch.py').then(e=>{
-    console.log("Match Script Ran");
-})
+// runScript('valmatch.py').then(e=>{
+//     console.log("Match Script Ran");
+// })
 // Routes
 fastify.get("/api", (req, res)=>{
     res.send({ msg: "API"})
@@ -120,6 +120,8 @@ fastify.post("/api/user/signup", (req, res) => {
     {
         let u = {
             name:req.body.username,
+            displayname:req.body.username,
+            username:req.body.username,
             email:req.body.email,
             pass:req.body.password
         }
@@ -148,6 +150,31 @@ fastify.post("/api/user/signup", (req, res) => {
         res.send({"error":"Invalid User", "data": req.body})
     }
 })
+fastify.post("/api/user/getInfo", (req, res) => {
+    let ip = req.socket.remoteAddress;
+    // Start with Token Login, since this is preferred
+    if(req.body.token) {
+        let token = req.body.token;
+        Query = query("R","users", {"token": token, "ip": ip})
+        Query.then(retdata => {
+            if(retdata.length > 0)
+            {
+                //Login Successful
+                retdata = retdata[0]
+                res.send({
+                    "success": "true",
+                    "data": retdata
+                })
+            } else {
+                res.send({
+                    "error":"Token invalid"
+                })
+            }
+        })
+    } else {
+        res.send({"error":"No Token Provided"})
+    }
+});
 //Websocket Testpage
 fastify.get("/webtest",(req,res)=>{
     let htmlBuffer = fs.readFileSync('client.html');
