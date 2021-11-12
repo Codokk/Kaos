@@ -8,10 +8,10 @@ const fastify = require('fastify')({ logger: true })
 fastify.register(require('fastify-websocket'));
 fastify.register(require('fastify-formbody'));
 const fs = require('fs');
+const geoip = require('geoip-lite');
 const jwt = require('jsonwebtoken');
 const { MongoClient } = require('mongodb');
 const sqlite3 = require('sqlite3').verbose();
-
 
 // Globals
 const wsdb = {};
@@ -30,6 +30,11 @@ const sqldb = new sqlite3.Database(":memory:");
 // Routes
 fastify.get("/api", (req, res)=>{
     res.send({ msg: "API"})
+})
+fastify.get("/api/fullrefresh", (req,res)=>{
+    runScript('fullgrab.py').then(e=>{
+        res.send("Updated!");
+    })
 })
 fastify.get("/api/streamer/*", {websocket: true}, (connection /* SocketStream */ , req /* FastifyRequest */ ) => {
     // Get the attempted Channel
@@ -57,10 +62,14 @@ fastify.get("/api/streamer/*", {websocket: true}, (connection /* SocketStream */
         wsdb[channel].users.delete(connection)
     }) 
 })
-fastify.get("/api/watch/*",(req, res) =>{
-
+fastify.get("/api/events/all",(req, res) =>{
+    let Query = query("R","events",{})
+    Query.then(retdata => {
+        res.send(retdata);
+    })
 })
 fastify.post("/api/user/login", (req, res) => {
+    req.body = JSON.parse(req.body);
     // Set all possible header vars that would be passed
     let ip = req.socket.remoteAddress;
     // Start with Token Login, since this is preferred
@@ -90,6 +99,7 @@ fastify.post("/api/user/login", (req, res) => {
             {
                 retdata = retdata[0]
                 let token = jwt.sign(retdata['email'], SALT);
+                let geo = geoip.lookup(ip);
                 res.send({
                     "success": "true",
                     "token": token,
@@ -97,7 +107,7 @@ fastify.post("/api/user/login", (req, res) => {
                 });
                 let q = query("U",'users', [
                     {"_id": retdata._id},
-                    {"token": token, "ip": ip}
+                    {"token": token, "ip": ip, "geo": geo}
                 ]);
                 q.then(e => {
                     console.log(e);
@@ -105,7 +115,8 @@ fastify.post("/api/user/login", (req, res) => {
             } else {
                 res.send({
                     "error": "No User Found",
-                    "data": res.body
+                    "data": res.body,
+                    "hash": GoodSalt(req.body.password)
                 })
             }
         })
@@ -151,6 +162,7 @@ fastify.post("/api/user/signup", (req, res) => {
     }
 })
 fastify.post("/api/user/getInfo", (req, res) => {
+    req.body = JSON.parse(req.body);
     let ip = req.socket.remoteAddress;
     // Start with Token Login, since this is preferred
     if(req.body.token) {
@@ -269,7 +281,7 @@ async function query(action, collection, params) {
 }
 function runScript(script) {
     return new Promise((resolve, reject) => {
-        const process = spawn('python3', ['./'+script]);
+        const process = spawn('python3', ['./scripts/'+script]);
 
         const out = []
         process.stdout.on(

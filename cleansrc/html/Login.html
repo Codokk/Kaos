@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/app.css">
+  <title>Kaos Login</title>
+</head>
+
+<body>
+  <div class="wrapper" id="Login">
+    <div id="formContent">
+      <div class="header">
+        <div class="menu-circles">
+        <div id="Close"></div>
+        <div id="Minimize"></div>
+        <div id="Fullscreen"></div>
+        </div>
+      </div>
+
+      <!-- Icon -->
+      <div class="fadeIn first">
+        <img src="../img/clash.png" id="icon" alt="User Icon" />
+      </div>
+
+      <!-- Login Form -->
+      <div id="errorBar">
+
+      </div>
+      <form id='login-form'>
+        <input type="text" id="username" class="fadeIn second" name="username" placeholder="login" autofocus>
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+        <input type="submit" id="loginbutton" class="fadeIn fourth" value="Log In">
+        <a style='display: block; margin-top: -30px; margin-bottom: 40px;' href="#" onclick="swapForm('signup')">Or Sign Up</a>
+      </form>
+      <form class='hidden' id='signup-form'>
+        <input type="text" id="signup-username" class="fadeIn second" name="username" placeholder="username" autofocus>
+        <input type="text" id="signup-email" class="fadeIn second" name="email" placeholder="email" autofocus>
+        <input type="password" id="signup-password" class="fadeIn third" name="password" placeholder="password">
+        <input type="submit" id="signupbutton" class="fadeIn fourth" value="Sign Up">
+        <a style='display: block; margin-top: -30px; margin-bottom: 40px;' href="#" onclick="swapForm('login')">Or Login</a>
+      </form>
+
+      <!-- Remind Passowrd -->
+      <div id="formFooter">
+        <a class="underlineHover" href="#" id="forgotpassword">Forgot Password?</a>
+      </div>
+
+    </div>
+  </div>
+</body>
+<script src="../js/util/setup.js"></script>
+<script src="../js/util/MenuHandler.js"></script>
+<script src="../js/modules/Login.js"></script>
+</html>

@@ -3,14 +3,15 @@
   "productName": "kaos",
   "version": "1.0.0",
   "description": "An Application to bring Gamers Together",
-  "main": "src/main.js",
+  "main": "cleansrc/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "scss": "./node_modules/.bin/sass ./src/scss ./src/css"
+    "scss": "./node_modules/.bin/sass ./src/scss ./src/css",
+    "scss2": "./node_modules/.bin/sass ./cleansrc/css"
   },
   "keywords": [],
   "author": "cody.krist",
@@ -48,6 +49,7 @@
     "fastify": "^3.23.1",
     "fastify-formbody": "^5.1.0",
     "fastify-websocket": "^4.0.0",
+    "geoip-lite": "^1.4.2",
     "jquery": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",

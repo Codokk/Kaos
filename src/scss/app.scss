@@ -608,7 +608,8 @@ body.light-mode:before {
         li {
             list-style: none;
             padding: 10px 18px;
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
             align-items: center;
             font-size: 16px;
             width: 100%;
@@ -645,18 +646,17 @@ body.light-mode:before {
 .products {
     display: flex;
     align-items: center;
-    width: 150px;
-
+    grid-column: 1/5;
+    overflow: hidden;
     @media screen and (max-width: 480px) {
         width: 120px;
     }
 }
 
 .status {
-    margin-left: auto;
-    width: 140px;
     font-size: 15px;
     position: relative;
+    grid-column: 6;
 
     @media screen and (max-width: 700px) {
         display: none;
@@ -770,6 +770,12 @@ body.light-mode:before {
     @media screen and (max-width: 480px) {
         width: auto;
     }
+}
+//fix
+li.adobe-product .button-wrapper {
+    width: auto;
+    grid-column: 8;
+    margin: auto;
 }
 
 .pop-up {
@@ -896,6 +902,9 @@ body.light-mode:before {
     border: 1px solid var(--theme-bg-color);
     color: var(--theme-color);
     padding: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
     cursor: pointer;
     transition: 0.3s ease;
 
@@ -934,10 +943,6 @@ body.light-mode:before {
             font-size: 15px;
             font-weight: 500;
         }
-    }
-
-    &+.app-card {
-        margin-left: 20px;
     }
 
     span {

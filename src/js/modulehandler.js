@@ -12,6 +12,16 @@ let PageDB = {
             }
         ]
     },
+    Tournaments: {
+        title: "Tournaments",
+        submodules: [
+            {
+                title: "hide",
+                module: "allTournaments",
+                action: "getall('events')"
+            }
+        ]
+    },
     News: {
         title: "Recent News",
         submodules: [
@@ -34,7 +44,7 @@ function PageSwap(Page) {
     for(i in Page.submodules)
     {
         let p = Page.submodules[i];
-        headerhtml += `<a class="main-header-link ` + (i==0?`is-active`:"") + `" onclick="SwapSubmodule('${p.module}')" href="#">${p.title}</a>`
+        headerhtml += `<a class="main-header-link ` + (i==0?`is-active`:"") + ` ` + (p.title == "hide" ? "hidden" : "") +`" onclick="SwapSubmodule('${p.module}')" href="#">${p.title}</a>`
     }
     // Set the title, load the module
     document.querySelector(".main-header").innerHTML = `
@@ -44,6 +54,7 @@ function PageSwap(Page) {
     </div>`;
     // Open the default Module
     SwapSubmodule(Page.submodules[0].module);
+    if(Page.submodules[0].action) runAction(Page.submodules[0].action)
 }
 function SwapSubmodule(submodule) {
     fs.readFile(`./src/html/submodules/${submodule}.html`, (err, html)=> {
@@ -51,22 +62,25 @@ function SwapSubmodule(submodule) {
         document.querySelector(".submodule-container").innerHTML = html;
         PersonalizePage();
     })
-    switch(submodule)
-    {
-        case "recentArticles":
-            LetsGetIntoTheNews();
-            break;
-        default:
-            console.log("No Script Required");
-            break;
-    }
 }
 
-function LetsGetIntoTheNews() {
-    // Get news articles from API, create the app-card
-    fetch(api + "/news").then(e => {
-        console.log(e);
-    })
+function runAction(fn) {
+    let a = fn.split("(");
+    a[1] = a[1].replace(")","")
+    a[1] = a[1].replaceAll("'","");
+    console.log(a);
+    switch(a[0])
+    {
+        case 'getall':
+            let ret = getall(a[1])
+            ret.then(e => {
+                console.log(e)
+            })
+            break;
+        default:
+            console.error("The Function [" + a[0] + "] is not defined in the runAction function in ModuleHandler.js")
+            break;
+    }
 }
 
 function PersonalizePage() {
@@ -76,5 +90,11 @@ function PersonalizePage() {
     for(let i = 0; i < keys.length; i++)
     {
         $(`.${keys[i]}-here`).html(User[keys[i]])
+    }
+}
+function BuildFavorites() {
+    for (i in User.favorites)
+    {
+
     }
 }

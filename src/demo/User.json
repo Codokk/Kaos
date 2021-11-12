@@ -1,0 +1,33 @@
+// User Object Stored in the cloud
+{
+    "diaplayname": "Demo User",
+    "email": "Demouser@test.site",
+    "favorites": [
+        {
+            "title": "Custom Name of the Module",
+            "module": "Actual Module Name",
+            "target": "Target in module" // Optional
+        }
+    ],
+    "fname": "First Name",
+    "hash": "Hashed User Password",
+    "ip": "127.0.0.1", // Last IP Logged in from
+    "image": "ID of image object", // Images are stored in a separate table for speed
+    "Koins": 100, // # Of Koins available to user,
+    "lname": "Last Name",
+    "login-log": [
+        {
+            "date": "1636725345274", // Date.now()
+            "ip": "127.0.0.1"
+        }
+    ],
+    "notifications": [
+        {
+            "title": "Name of Notification",
+            "module": "Module to navigate to",
+            "action": "Script to run"
+        }
+    ],
+    "token": "JSON Web Token",
+    "username": "Demo User"
+}

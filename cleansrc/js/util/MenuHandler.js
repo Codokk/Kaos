@@ -1,0 +1,9 @@
+$('#Fullscreen').addEventListener("click",function(){
+    ipcRenderer.send("Fullscreen");
+})
+$('#Minimize').addEventListener("click",function(){
+    ipcRenderer.send("Minimize");
+})
+$("#Close").addEventListener("click",function(){
+    window.close();
+})

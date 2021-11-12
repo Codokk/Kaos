@@ -10,7 +10,7 @@ const path = require('path');
 const dataPath = electron.app.getPath('userData');
 const filePath = path.join(dataPath, 'config.json');
 const url = require('url');
-const app = electron.app
+const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 const root = __dirname;
