@@ -1,32 +1,19 @@
 {
-  "name": "kaos2",
-  "productName": "kaos2",
+  "name": "kaos",
+  "productName": "kaos",
   "version": "1.0.0",
-<<<<<<< Updated upstream
   "description": "An Application to bring Gamers Together",
-  "main": "cleansrc/main.js",
-=======
-  "description": "My Electron application description",
   "main": "src/main.js",
->>>>>>> Stashed changes
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-<<<<<<< Updated upstream
     "lint": "echo \"No linting configured\"",
-    "scss": "./node_modules/.bin/sass ./src/scss ./src/css",
-    "scss2": "./node_modules/.bin/sass ./cleansrc/css"
-=======
-    "lint": "echo \"No linting configured\""
->>>>>>> Stashed changes
+    "scss": "./node_modules/.bin/sass ./src/scss ./src/css"
   },
   "keywords": [],
-  "author": {
-    "name": "Cody Krist",
-    "email": "Codokk101@gmail.com"
-  },
+  "author": "cody.krist",
   "license": "MIT",
   "config": {
     "forge": {
@@ -35,7 +22,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "kaos2"
+            "name": "Kaos"
           }
         },
         {
@@ -61,11 +48,12 @@
     "fastify": "^3.23.1",
     "fastify-formbody": "^5.1.0",
     "fastify-websocket": "^4.0.0",
-    "geoip-lite": "^1.4.2",
     "jquery": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "trim-newlines": "^4.0.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.61",
@@ -73,6 +61,8 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.61",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
-    "electron": "15.3.1"
+    "electron": "15.3.0",
+    "electron-prebuilt-compile": "^8.2.0",
+    "sass": "^1.43.4"
   }
 }
