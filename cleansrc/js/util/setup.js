@@ -1,8 +1,8 @@
 /* Set up all items that other JS files may need */
 require('dotenv').config();
 let api = process.env.api;
-const fs = require('fs');
 const {ipcRenderer} = require('electron');
+const fs = require('fs');
 let Crypto = require('node:crypto');
 
 //Little JQuery but not really
@@ -23,7 +23,12 @@ async function APIRequest(url, method, data = false) {
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-
+function ReadJSON(doc) {
+    console.log(__dirname);
+    let a = fs.readFileSync(__dirname + "/../js/templates/"+doc+".json");
+    a = JSON.parse(a);
+    return  a;
+}
 function titleFormatter(string) {
     string = string.split("-");
     let ret = "";

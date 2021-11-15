@@ -1,8 +1,9 @@
 let user = {};
-
 // On Page Ready
 document.addEventListener("DOMContentLoaded", (event) => {
     let JWT = ipcRenderer.sendSync("GetJWT");
+    user = ReadJSON('User');
+    console.log("YES");
     //Attempt a token login
     if (JWT) {
         APIRequest("/user/login", "POST", {
@@ -36,11 +37,10 @@ function Login() {
         })
 }
 function SignUp() {
-    APIRequest("/user/signup", "POST", {
-            username: $("#signup-username").value,
-            email: $("#signup-email").value,
-            password: $("#signup-password").value
-        })
+    user.username = $("#signup-username").value;
+    user.email = $("#signup-email").value;
+    user.password = $("#signup-password").value;
+    APIRequest("/user/signup", "POST", user)
         .then(e => {
             console.log(e);
             if (e.error) Err(e.error);

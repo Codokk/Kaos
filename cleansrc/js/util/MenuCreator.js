@@ -1,5 +1,3 @@
-const { Menu } = require("electron");
-
 let MenuObject = [
     {
         title: "Featured Tournaments",
@@ -29,6 +27,7 @@ let MenuObject = [
         ]
     }
 ]
+
 function CreateSidemenu(menu) {
     if(!menu) menu = MenuObject;
     let html;

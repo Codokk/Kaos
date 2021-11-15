@@ -3,7 +3,7 @@
   "productName": "kaos",
   "version": "1.0.0",
   "description": "An Application to bring Gamers Together",
-  "main": "src/main.js",
+  "main": "cleansrc/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
