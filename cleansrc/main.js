@@ -1,11 +1,11 @@
 const {ipcMain,session} = require('electron');
 const { exec } = require('child_process');
 const electron = require('electron');
+const app = electron.app;
 const fs = require('fs');
 const path = require('path');
-const dataPath = electron.app.getPath('userData');
+const dataPath = app.getPath('userData');
 const filePath = path.join(dataPath, 'config.json');
-const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 const root = __dirname;
@@ -34,7 +34,7 @@ function createLoginWindow() {
     });
 
     LoginWindow.loadFile(root + '/html/Login.html');
-
+    LoginWindow.webContents.openDevTools();
     LoginWindow.on('closed', function () {
         LoginWindow = null
     })
@@ -58,6 +58,7 @@ function createMainWindow() {
     });
 
     MainWindow.loadFile(root + '/html/App.html');
+    MainWindow.webContents.openDevTools();
     MainWindow.on('closed', function () {
         MainWindow = null
     })

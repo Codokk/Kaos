@@ -8,6 +8,7 @@ const G = {
 document.addEventListener("DOMContentLoaded",(e) => {
     if(UpdateGlobal()) {
         console.log("Loaded, unhiding the app");
+        CreateSidemenu(G.user.menu);
         PageSwap('Dashboard');
         $("#app").classList.remove("hidden");
     }
