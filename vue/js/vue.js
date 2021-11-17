@@ -2,6 +2,7 @@ let {screen} = require('electron');
 require('dotenv').config();
 // Page Registration
 import LoginPage from "../pages/login.js";
+import Dashboard from "../pages/dashboard.js";
 // Component Registration
 import TopNav from "../components/TopNav.js";
 
@@ -34,9 +35,9 @@ app.config.globalProperties.$APICall = async function(url, method, data = false)
 // Build Page Router
 const routes = [
   {
-    path: "/",
-    name: "Login",
-    component: LoginPage
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard
   },
   {
     path: '/:pathMatch(.*)*',

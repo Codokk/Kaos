@@ -6,7 +6,7 @@ export default {
     </div>
 
     <!-- Login Form -->
-    <div id="errorBar"></div>
+    <div id="errorBar">Dashboard</div>
     <form v-on:submit.prevent="onSubmit" class="flex-col" v-if="isLoggingIn" id='login-form'>
         <input v-model="formUsername" type="text" id="username" class="fadeIn second" name="username" placeholder="login" autofocus>
         <input v-model="formPassword" type="password" id="password" class="fadeIn third" name="password" placeholder="password">
@@ -48,11 +48,7 @@ export default {
             .then(e=>{
                 console.log(e);
                 if (e.error) Err(e.error);
-                if (e.success) {
-                    /*ipcRenderer.send("JWT", e.token);*/
-                    this.$parent.loggedin = true;
-                    this.$router.push("/dashboard");
-                }
+                if (e.success) {/*ipcRenderer.send("JWT", e.token);*/this.$router.push("dashboard");}
 
             })
         },
