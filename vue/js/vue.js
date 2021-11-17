@@ -4,10 +4,10 @@ import LoginPage from "../pages/login.js";
 // Component Registration
 import TopNav from "../components/TopNav.js";
 
-var mainScreen = screen.getPrimaryDisplay();
-var dimensions = mainScreen.size;
+// var mainScreen = screen.getPrimaryDisplay();
+// var dimensions = mainScreen.size;
 
-console.log(dimensions.width + "x" + dimensions.height);
+// console.log(dimensions.width + "x" + dimensions.height);
 // Outputs i.e : 1280x720
 
 let app = Vue.createApp({
@@ -20,7 +20,9 @@ let app = Vue.createApp({
         }
     },
     methods: {
-
+      APICall(param) {
+        console.log(param);
+      }
     }
 });
 
@@ -51,7 +53,7 @@ app.component('button-counter', {
       }
     },
     template: `
-      <button @click="count++">
+      <button @click="APICall('test')">
         You clicked me {{ count }} times.
       </button>`
   })
