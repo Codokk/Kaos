@@ -1,12 +1,18 @@
+let {screen} = require('electron');
 // Page Registration
 import LoginPage from "../pages/login.js";
 // Component Registration
 import TopNav from "../components/TopNav.js";
 
+var mainScreen = screen.getPrimaryDisplay();
+var dimensions = mainScreen.size;
+
+console.log(dimensions.width + "x" + dimensions.height);
+// Outputs i.e : 1280x720
+
 let app = Vue.createApp({
     data() {
         return {
-            message: "IT'S ALIVE",
             loggedin: false,
             user: {
                 displayname: "LOL"

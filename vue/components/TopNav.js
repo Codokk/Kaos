@@ -2,9 +2,9 @@ export default {
     template: `
 <div class="header">
     <div class="menu-circles">
-        <div id="Close"></div>
+        <div @click="close()" id="Close"></div>
         <div id="Minimize"></div>
-        <div id="Fullscreen"></div>
+        <div @click="fullscreen()" id="Fullscreen"></div>
     </div>
     <div v-if="loggedin" class="header-menu">
         <a class="menu-link is-active username-here" href="#">{{message}}</a>
@@ -34,5 +34,27 @@ export default {
     props: [
         'message',
         'loggedin'
-    ]
+    ],
+    data() {
+        return {
+            windowx: 0,
+            windowy: 0
+        }
+    },
+    mounted() {
+        window.addEventListener('resize', this.getDimensions);
+    },
+    methods: {
+        getDimensions() {
+            this.windowx = document.documentElement.clientWidth;
+            this.windowy = document.documentElement.clientHeight;
+            console.log( this.windowx + " | " + this.windowy);
+        },
+        close() {
+            window.close();
+        },
+        fullscreen() {
+            window.maximize();
+        }
+    }
 }
