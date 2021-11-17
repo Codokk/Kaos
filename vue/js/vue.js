@@ -1,4 +1,5 @@
 let {screen} = require('electron');
+require('dotenv').config();
 // Page Registration
 import LoginPage from "../pages/login.js";
 // Component Registration
@@ -9,6 +10,8 @@ import TopNav from "../components/TopNav.js";
 
 // console.log(dimensions.width + "x" + dimensions.height);
 // Outputs i.e : 1280x720
+console.log(Vue);
+// Vue.prototype.$test = function(){console.log('test')}
 
 let app = Vue.createApp({
     data() {
@@ -18,14 +21,16 @@ let app = Vue.createApp({
                 displayname: "LOL"
             },
         }
-    },
-    methods: {
-      APICall(param) {
-        console.log(param);
-      }
     }
 });
-
+app.config.globalProperties.$APICall = async function(url, method, data = false) {
+  let params = { method: method }
+  if(data) params.body = JSON.stringify(data)
+  let a = await fetch(process.env.api + url, params)
+  a = await a.json().then(e=> {return e})
+  console.log(a);
+  return a;
+};
 // Build Page Router
 const routes = [
   {
@@ -52,8 +57,11 @@ app.component('button-counter', {
         count: 0
       }
     },
+    props: [
+      'APICall()'
+    ],
     template: `
-      <button @click="APICall('test')">
+      <button @click="APICall()">
         You clicked me {{ count }} times.
       </button>`
   })
