@@ -4,7 +4,7 @@ let MenuObject = [
         items: [
             {
                 title: "Valorant Champions",
-                fn: "ViewEvent()",
+                fn: "ViewEvent",
                 page: 449
             }
         ]
@@ -30,9 +30,13 @@ let MenuObject = [
 
 function CreateSidemenu(menu) {
     if(!menu) menu = MenuObject;
-    let html;
+    let html = "";
     for(i in menu) {
         let m = menu[i];
+        console.log(i);
+        console.log(menu);
+        //Always defualt to Pageswap if no function set
+        if(!m.fn) m.fn = 'PageSwap';
         html += `
         <div class="side-wrapper">
             <div class="side-title">${m.title}</div>
@@ -41,7 +45,7 @@ function CreateSidemenu(menu) {
         {
             let s = menu[i].items[j];
             html += `
-            <a href="#" onClick="PageSwap('general')">
+            <a href="#" onClick="${m.fn}('${m.param}')">
                     <i class="fas fa-${s.icon}"></i>
                     ${s.title}
                 </a>`;

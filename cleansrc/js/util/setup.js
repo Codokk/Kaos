@@ -2,6 +2,8 @@
 require('dotenv').config();
 let api = process.env.api;
 const {ipcRenderer} = require('electron');
+const Vue = require('vue');
+const VueRouter = require('vue-router');
 const fs = require('fs');
 let Crypto = require('node:crypto');
 

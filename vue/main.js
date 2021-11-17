@@ -1,4 +1,4 @@
-const {ipcMain,session} = require('electron');
+const {ipcMain} = require('electron');
 const { exec } = require('child_process');
 const electron = require('electron');
 const app = electron.app;
@@ -10,15 +10,14 @@ const BrowserWindow = electron.BrowserWindow;
 
 const root = __dirname;
 
-let MainWindow;
-let LoginWindow;
+let AppWindow;
 let Active_Peers = {};
 let isFullscreen = false;
 let JWT = readData("JWT");
 // Window Functions
-function createLoginWindow() {
-    LoginWindow = new BrowserWindow({
-        name: "Login",
+function createAppWindow() {
+    AppWindow = new BrowserWindow({
+        name: "AppWindow",
         width: 437,
         height: 600,
         icon: root + '/src/img/favicon.png',
@@ -33,48 +32,10 @@ function createLoginWindow() {
         webContents: true
     });
 
-    LoginWindow.loadFile(root + '/html/Login.html');
-    LoginWindow.webContents.openDevTools();
-    LoginWindow.on('closed', function () {
-        LoginWindow = null
-    })
-}
-
-function createMainWindow() {
-    // MainWindow = new BrowserWindow({
-    //     name: "App",
-    //     width: 1080,
-    //     height: 720,
-    //     icon: root + '/img/favicon.png',
-    //     frame: false,
-    //     transparent: true,
-    //     webPreferences: {
-    //         nativeWindowOpen: true,
-    //         nodeIntegration: true,
-    //         contextIsolation: false,
-    //         enableRemoteModule: true,
-    //     },
-    //     webContents: true
-    // });
-    /* Just for testing purposes */
-    MainWindow = new BrowserWindow({
-        name: "App",
-        width: 1080,
-        height: 720,
-        icon: root + '/img/favicon.png',
-        webPreferences: {
-            nativeWindowOpen: true,
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true,
-        },
-        webContents: true
-    });
-
-    MainWindow.loadFile(root + '/vue/index.html');
-    MainWindow.webContents.openDevTools();
-    MainWindow.on('closed', function () {
-        MainWindow = null
+    AppWindow.loadFile(root + '/html/index.html');
+    AppWindow.webContents.openDevTools();
+    AppWindow.on('closed', function () {
+        AppWindow = null
     })
 }
 // IPC Renderer Functions
@@ -89,16 +50,10 @@ ipcMain.on("Fullscreen", () => {
 ipcMain.on("Logout", () => {
     writeData("JWT", "");
     JWT = "";
-    setTimeout(()=>{
-        createLoginWindow();
-        MainWindow.close();
-    },1000)
 })
 ipcMain.on("JWT", (e, token) => {
     JWT = token;
     writeData("JWT", token);
-    createMainWindow()
-    LoginWindow.close();
 });
 ipcMain.on("GetJWT", (e) => {
     e.returnValue = JWT;
@@ -117,11 +72,11 @@ ipcMain.on("GetValorantStats", (e, id) => {
 // Start App
 app.on('ready', () => {
     console.log("JWT: " + JWT);
-    createLoginWindow();
+    createAppWindow();
 });
 app.on('activate', function () {
-    if (mainWindow === null) {
-        createWindow()
+    if (AppWindow === null) {
+        createAppWindow()
     }
 });
 // Stop App

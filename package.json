@@ -3,7 +3,7 @@
   "productName": "kaos",
   "version": "1.0.0",
   "description": "An Application to bring Gamers Together",
-  "main": "cleansrc/main.js",
+  "main": "vue/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -54,7 +54,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
     "trim-newlines": "^4.0.2",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "vue": "3",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.61",
